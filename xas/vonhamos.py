@@ -14,7 +14,7 @@ from .image_analysis import estimate_background_images, correct_pil100k2_images_
 from scipy.ndimage import center_of_mass, rotate
 from scipy import linalg
 from sklearn.covariance import MinCovDet
-from PyQt5.QtCore import QObject, QThread, pyqtSignal, pyqtSlot, QTimer
+from qtpy.QtCore import QObject, QThread, Signal, Slot, QTimer
 import h5py
 
 
@@ -678,10 +678,10 @@ def process_von_hamos_scan_legacy(df, extended_data, comments, hdr, path_to_file
 #         return cen, fwhm, y_fit
 
 class H5Processor(QObject):
-    result_ready = pyqtSignal(list, np.ndarray, np.ndarray, np.ndarray)  # batch, image, x, y
-    log_message = pyqtSignal(str)
-    progress = pyqtSignal(int)
-    finished = pyqtSignal()
+    result_ready = Signal(list, np.ndarray, np.ndarray, np.ndarray)  # batch, image, x, y
+    log_message = Signal(str)
+    progress = Signal(int)
+    finished = Signal()
 
     def __init__(self, file_queue, plot_calibration, perform_calibration, process_scan_file):
         super().__init__()
@@ -730,10 +730,10 @@ def load_h5(file_path: str=None) -> tuple:
 
 
 class ProcessingThread(QThread):
-    result_ready = pyqtSignal(dict)  # batch, image, x, y
-    log_message = pyqtSignal(str)
-    progress = pyqtSignal(int)
-    finished = pyqtSignal()
+    result_ready = Signal(dict)  # batch, image, x, y
+    log_message = Signal(str)
+    progress = Signal(int)
+    finished = Signal()
 
     def __init__(self, file_queue: str=None,
                  plot_calibration:bool=False,
@@ -806,10 +806,10 @@ class ProcessingTask:
 
 
 class ProcessingWorker(QObject):
-    result_ready = pyqtSignal(dict)  # batch, image, x, y
-    log_message = pyqtSignal(str)
-    progress = pyqtSignal(int)
-    finished = pyqtSignal()
+    result_ready = Signal(dict)  # batch, image, x, y
+    log_message = Signal(str)
+    progress = Signal(int)
+    finished = Signal()
 
     def __init__(self):
         super().__init__()
@@ -827,7 +827,7 @@ class ProcessingWorker(QObject):
         self._running = False
         self.task_queue.put(None)
 
-    @pyqtSlot()
+    @Slot()
     def run(self):
         while self._running:
             task = self.task_queue.get()

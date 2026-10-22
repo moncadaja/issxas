@@ -1,4 +1,4 @@
-from PyQt5 import QtCore
+from qtpy import QtCore
 import pandas as pd
 from larch import Group as xafsgroup
 from larch.xafs import pre_edge, autobk, mback, xftf
@@ -129,7 +129,7 @@ class XASDataSet:
         # diffline = (self.post_edge - self.pre_edge) / self.edge_step
         # self.flat = self.norm + step * (1 - diffline)
 
-        step_index = int(np.argwhere(self.energy > self.e0)[0])
+        step_index = int(np.flatnonzero(self.energy > self.e0)[0])
         zeros = np.zeros(step_index)
         ones = np.ones(self.energy.shape[0] - step_index)
         step = np.concatenate((zeros, ones), axis=0)
@@ -270,7 +270,7 @@ class XASDataSet:
 
 
 class XASProject(QtCore.QObject):
-    datasets_changed = QtCore.pyqtSignal(object)
+    datasets_changed = QtCore.Signal(object)
     _datasets = []
 
     def __init__(self, *args, **kwargs):

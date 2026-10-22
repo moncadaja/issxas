@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import scipy.integrate
 from scipy import interpolate
 import math
-from PyQt5 import QtCore
+from qtpy import QtCore
 
 import time as ttime
 #import pexpect

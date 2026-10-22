@@ -12,7 +12,6 @@ from xas.analysis import prenormalize_data, standardize_energy_grid
 
 import matplotlib
 from functools import reduce
-matplotlib.use("TkAgg")
 
 
 
@@ -441,7 +440,6 @@ def zscore_outlier_rejection(sg_df_uid: pd.DataFrame, columns=["mut", "muf", "mu
 
 
 def test_df_uid(path):
-    matplotlib.use("TkAgg")
     df_uid = pd.read_json(path)
     df_uid["data"] = df_uid["data"].apply(pd.DataFrame)  # convert dicts
     df_uid = df_uid.reset_index(drop=True)

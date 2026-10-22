@@ -202,7 +202,7 @@ class PersistentListWithQTreeWidget(PersistentList):
     #     qtitem.setText(0, item_name)
     #     qtitem.setExpanded(True)
     #     if checkable:
-    #         qtitem.setFlags(qtitem.flags() | Qt.ItemIsTristate | Qt.ItemIsUserCheckable)
+    #         qtitem.setFlags(qtitem.flags() | Qt.ItemIsAutoTristate | Qt.ItemIsUserCheckable)
     #     if force_unchecked:
     #         qtitem.setCheckState(0, Qt.Unchecked)
     #     return qtitem
@@ -225,7 +225,7 @@ class PersistentListWithQTreeWidget(PersistentList):
     #     super().update_list_action()
 
 
-from PyQt5 import uic, QtGui, QtCore, QtWidgets
+from qtpy import uic, QtGui, QtCore, QtWidgets
 
 
 def parse_item(input, checkable=True):

@@ -57,7 +57,7 @@ class LarchCalculator:
 
     @staticmethod
     def custom_flatten(larch_group: larch.Group):
-        step_index = int(np.argwhere(larch_group.energy > larch_group.e0)[0])
+        step_index = int(np.flatnonzero(larch_group.energy > larch_group.e0)[0])
         zeros = np.zeros(step_index)
         ones = np.ones(larch_group.energy.shape[0] - step_index)
         step = np.concatenate((zeros, ones), axis=0)
