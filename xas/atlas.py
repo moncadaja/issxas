@@ -12,6 +12,33 @@ import matplotlib
 import xraydb
 import copy
 import xlsxwriter
+import json
+import importlib.resources
+
+
+def load_crystal_library(path=None):
+    """Read the analyzer crystal library (default: xas/crystal_library.json).
+
+    Returns ``(geometries, crystals)``: ``geometries`` is the ordered list of
+    geometry labels; each crystal dict has ``material``, ``hkl``, ``color``,
+    ``notes``, ``inventory`` ({geometry label: count}) and ``at_iss``
+    (True when any count is non-zero).
+    """
+    if path is None:
+        path = importlib.resources.files('xas') / 'crystal_library.json'
+    with open(str(path)) as fp:
+        data = json.load(fp)
+    labels = {g['key']: g['label'] for g in data['geometries']}
+    crystals = []
+    for entry in data['crystals']:
+        inventory = {labels[key]: int(entry['inventory'].get(key, 0)) for key in labels}
+        crystals.append({'material': entry['material'],
+                         'hkl': list(entry['hkl']),
+                         'color': entry.get('color', 'k'),
+                         'notes': entry.get('notes', ''),
+                         'inventory': inventory,
+                         'at_iss': any(count > 0 for count in inventory.values())})
+    return list(labels.values()), crystals
 
 
 # %%
@@ -357,7 +384,7 @@ def _is_in_library(material, hkl, crystal_library):
     """
     Check if a reflection (or its base crystal) exists in the crystal library.
     
-    Returns tuple: (in_library: bool, at_iss: bool)
+    Returns tuple: (in_library: bool, at_iss: bool, library_crystal: dict or None)
     """
     normalized_hkl = _normalize_hkl(hkl)
     
@@ -370,9 +397,9 @@ def _is_in_library(material, hkl, crystal_library):
         crystal_reflections = compute_allowed_reflections(crystal, nmin=1, nmax=20)
         for refl in crystal_reflections:
             if _normalize_hkl(refl['hkl']) == normalized_hkl:
-                return True, crystal['at_iss']
+                return True, crystal['at_iss'], crystal
     
-    return False, False
+    return False, False, None
 
 
 def get_best_crystals_for_emission(element, emission_line, crystal_library=None, 
@@ -495,7 +522,7 @@ def get_best_crystals_for_emission(element, emission_line, crystal_library=None,
         seen_crystals.add(crystal_key)
         
         # Check if in library
-        in_library, at_iss = _is_in_library(material, hkl, crystal_library)
+        in_library, at_iss, library_crystal = _is_in_library(material, hkl, crystal_library)
         
         # Calculate reflectivity and energy resolution
         try:
@@ -515,6 +542,8 @@ def get_best_crystals_for_emission(element, emission_line, crystal_library=None,
             'energy_resolution': round(energy_resolution, 3),  # FWHM in eV
             'in_library': in_library,
             'at_iss': at_iss,
+            'inventory': dict(library_crystal['inventory']) if library_crystal else {},
+            'library_crystal': crystal_str(library_crystal) if library_crystal else '',
         })
     
     # Sort by reflectivity (highest first)
@@ -557,13 +586,14 @@ def print_best_crystals(element, emission_line, crystal_library=None, n_results=
     
     print(f"\n{result['element']} {result['emission_line']} @ {result['energy']:.1f} eV")
     print("-" * 95)
-    print(f"{'Rank':<6}{'Crystal':<15}{'Bragg Angle':<14}{'Reflectivity':<14}{'ΔE (eV)':<12}{'In Library':<12}{'At ISS'}")
+    print(f"{'Rank':<6}{'Crystal':<15}{'Bragg Angle':<14}{'Reflectivity':<14}{'ΔE (eV)':<12}{'In Library':<12}{'At ISS':<8}{'Inventory'}")
     print("-" * 95)
     
     for crystal in result['crystals']:
         in_lib_str = "Yes" if crystal['in_library'] else "No"
         at_iss_str = "Yes" if crystal['at_iss'] else "-"
-        print(f"{crystal['rank']:<6}{crystal['hkl_str']:<15}{crystal['bragg_angle']:<14.2f}{crystal['reflectivity']:<14.4f}{crystal['energy_resolution']:<12.3f}{in_lib_str:<12}{at_iss_str}")
+        inventory_str = ', '.join(f'{geometry}: {count}' for geometry, count in crystal['inventory'].items() if count)
+        print(f"{crystal['rank']:<6}{crystal['hkl_str']:<15}{crystal['bragg_angle']:<14.2f}{crystal['reflectivity']:<14.4f}{crystal['energy_resolution']:<12.3f}{in_lib_str:<12}{at_iss_str:<8}{inventory_str}")
     
     return result
 
@@ -730,29 +760,7 @@ def plot_atlas(crystal_library, emin=4300, emax=12700, plot_reflectivity=True):
     return reflection_library, emission_lines_list, edges_list, fmt_top, fmt_second_top
 
 
-crystal_library = [{'material': 'Ge', 'hkl': [1, 0, 0], 'at_iss': True, 'color': 'r'},
-                   {'material': 'Ge', 'hkl': [1, 1, 0], 'at_iss': True, 'color': 'r'},
-                   {'material': 'Ge', 'hkl': [1, 1, 1], 'at_iss': True, 'color': 'r'},
-                   {'material' : 'Ge', 'hkl' : [2, 1, 1], 'at_iss' : True, 'color' : 'r'},
-                   {'material': 'Ge', 'hkl': [3, 1, 0], 'at_iss': True, 'color': 'r'},
-                   {'material' : 'Ge', 'hkl' : [3, 2, 1], 'at_iss' : False, 'color' : 'r'},
-                   {'material' : 'Ge', 'hkl' : [3, 3, 1], 'at_iss' : True, 'color' : 'r'},
-                   {'material' : 'Ge', 'hkl' : [3, 1, 1], 'at_iss' : False, 'color' : 'r'},
-                   {'material': 'Si', 'hkl': [1, 1, 1], 'at_iss': True, 'color': 'b'},
-                   {'material': 'Si', 'hkl': [1, 1, 0], 'at_iss': True, 'color': 'b'},
-                   {'material': 'Si', 'hkl': [1, 0, 0], 'at_iss': False, 'color': 'b'},
-                   {'material' : 'Si', 'hkl' : [2, 1, 0], 'at_iss' : False, 'color': 'b'},
-                   {'material': 'Si', 'hkl': [2, 1, 1], 'at_iss': True, 'color': 'b'},
-                   {'material': 'Si', 'hkl': [3, 1, 1], 'at_iss': True, 'color': 'b'},
-                   {'material': 'Si', 'hkl': [3, 1, 0], 'at_iss': True, 'color': 'b'},
-                   {'material' : 'Si', 'hkl' : [3, 2, 1], 'at_iss' : True, 'color': 'b'},
-                   {'material': 'Si', 'hkl': [3, 3, 1], 'at_iss': True, 'color': 'b'},
-                   {'material': 'Si', 'hkl': [5, 3, 1], 'at_iss': True, 'color': 'b'},
-                   {'material' : 'Si', 'hkl' : [5, 5, 1], 'at_iss' : False, 'color': 'b'}, # substitute for Si-444 for Ni-Kb, <5% better
-                   {'material' : 'Si', 'hkl' : [5, 5, 3], 'at_iss' : False, 'color': 'b'}, # substitue for Ge-800 for Cu-Kb, much worse
-                   {'material' : 'Si', 'hkl' : [5, 2, 1], 'at_iss' : False, 'color': 'b'},
-                   {'material': 'Si', 'hkl': [7, 3, 3], 'at_iss': True, 'color': 'b'},
-                   ]
+CRYSTAL_GEOMETRIES, crystal_library = load_crystal_library()
 
 if __name__ == '__main__':
     make_figure_with_small_font(1, figsize=(11, 8.5), clear=True, fontsize=6)

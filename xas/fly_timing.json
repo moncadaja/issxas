@@ -1,0 +1,40 @@
+{
+  "_comment": "Fly-scan timing policy. time_per_bin_s = acquisition time wanted per processing bin (xas.bin grid) in each trajectory region; HERFD derives it from target counts per bin over the live Pilatus ROI rate. Edit freely.",
+  "bin_grid": {
+    "preedge_spacing_eV": 5,
+    "xanes_spacing_eV": [
+      [
+        14000,
+        0.2
+      ],
+      [
+        21000,
+        0.3
+      ],
+      [
+        null,
+        0.4
+      ]
+    ],
+    "exafs_spacing_k": 0.04,
+    "edge_start_eV": -30,
+    "edge_end_eV": 50
+  },
+  "time_per_bin_s": {
+    "EXAFS": {
+      "preedge": 0.118,
+      "xanes": 0.024,
+      "postedge": 0.059
+    },
+    "XANES": {
+      "preedge": 0.118,
+      "xanes": 0.072,
+      "postedge": 0.059
+    }
+  },
+  "HERFD": {
+    "target_counts_per_bin": 1000,
+    "fallback_multiplier": 5
+  },
+  "min_region_duration_s": 1.0
+}

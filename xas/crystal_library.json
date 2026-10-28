@@ -1,0 +1,32 @@
+{
+  "_comment": "ISS analyzer crystal library. Edit freely: 'inventory' is the number of crystals per geometry (0 = not owned, the reflection is still considered for the search). Source: ISS X-ray Emission Spectrometers wiki page, 2026-10-27.",
+  "geometries": [
+    {"key": "johann_1000", "label": "Johann 1000 mm", "description": "Spherically bent, 1000 mm Rowland radius, 100 mm diameter"},
+    {"key": "johann_500", "label": "Johann 500 mm", "description": "Spherically bent, 500 mm Rowland radius, 100 mm diameter"},
+    {"key": "von_hamos_500", "label": "von Hamos 500 mm", "description": "Cylindrically bent, 500 mm radius, 110 x 25 mm2"}
+  ],
+  "crystals": [
+    {"material": "Si", "hkl": [1, 1, 1], "color": "b", "inventory": {"johann_1000": 5, "johann_500": 0, "von_hamos_500": 3}, "notes": "Cu, Sr, Pd, Cr, Zr, Hg, Pu (Johann); Fe, Cu, Zn, W, Re, Hg, Pb, Bi (von Hamos)"},
+    {"material": "Si", "hkl": [1, 1, 0], "color": "b", "inventory": {"johann_1000": 1, "johann_500": 0, "von_hamos_500": 1}, "notes": "Mn, Rh, Au, Pb"},
+    {"material": "Si", "hkl": [1, 0, 0], "color": "b", "inventory": {"johann_1000": 0, "johann_500": 0, "von_hamos_500": 0}, "notes": ""},
+    {"material": "Si", "hkl": [2, 1, 0], "color": "b", "inventory": {"johann_1000": 0, "johann_500": 0, "von_hamos_500": 0}, "notes": ""},
+    {"material": "Si", "hkl": [2, 1, 1], "color": "b", "inventory": {"johann_1000": 3, "johann_500": 0, "von_hamos_500": 3}, "notes": "Se, As, Ir, Pt (Johann); Mn, Cr, Ce (von Hamos)"},
+    {"material": "Si", "hkl": [3, 1, 1], "color": "b", "inventory": {"johann_1000": 1, "johann_500": 1, "von_hamos_500": 0}, "notes": "Ca, Au; Au VTC (500 mm)"},
+    {"material": "Si", "hkl": [3, 1, 0], "color": "b", "inventory": {"johann_1000": 3, "johann_500": 0, "von_hamos_500": 0}, "notes": "Ni, Co, Yb"},
+    {"material": "Si", "hkl": [3, 2, 1], "color": "b", "inventory": {"johann_1000": 1, "johann_500": 0, "von_hamos_500": 0}, "notes": "Zn, Re, U"},
+    {"material": "Si", "hkl": [3, 3, 1], "color": "b", "inventory": {"johann_1000": 2, "johann_500": 0, "von_hamos_500": 0}, "notes": "Pr, Nd"},
+    {"material": "Si", "hkl": [5, 3, 1], "color": "b", "inventory": {"johann_1000": 3, "johann_500": 0, "von_hamos_500": 0}, "notes": "Co, Fe"},
+    {"material": "Si", "hkl": [5, 5, 1], "color": "b", "inventory": {"johann_1000": 0, "johann_500": 0, "von_hamos_500": 0}, "notes": "substitute for Si(444) for Ni Kb, <5 % better"},
+    {"material": "Si", "hkl": [5, 5, 3], "color": "b", "inventory": {"johann_1000": 0, "johann_500": 0, "von_hamos_500": 0}, "notes": "substitute for Ge(800) for Cu Kb, much worse"},
+    {"material": "Si", "hkl": [5, 2, 1], "color": "b", "inventory": {"johann_1000": 0, "johann_500": 0, "von_hamos_500": 0}, "notes": ""},
+    {"material": "Si", "hkl": [7, 3, 3], "color": "b", "inventory": {"johann_1000": 1, "johann_500": 0, "von_hamos_500": 0}, "notes": "Ge, Zn, Pt, Au, Hg, W"},
+    {"material": "Ge", "hkl": [1, 0, 0], "color": "r", "inventory": {"johann_1000": 2, "johann_500": 0, "von_hamos_500": 3}, "notes": "Ti, Ga, Cu, Zn, La, Ce, Os, Ir, Pt"},
+    {"material": "Ge", "hkl": [1, 1, 0], "color": "r", "inventory": {"johann_1000": 2, "johann_500": 0, "von_hamos_500": 0}, "notes": "Fe, Ge, Kr, Mn, Zn, Ga, Se"},
+    {"material": "Ge", "hkl": [1, 1, 1], "color": "r", "inventory": {"johann_1000": 2, "johann_500": 0, "von_hamos_500": 3}, "notes": "Mn, Cu, Ge, Cr, Co, Ni, Zn, Ga, Au, Hg"},
+    {"material": "Ge", "hkl": [2, 1, 1], "color": "r", "inventory": {"johann_1000": 1, "johann_500": 0, "von_hamos_500": 0}, "notes": "Cr, Mn, Se, V, Ge, As, Bi"},
+    {"material": "Ge", "hkl": [3, 1, 0], "color": "r", "inventory": {"johann_1000": 4, "johann_500": 0, "von_hamos_500": 1}, "notes": "Fe, Er, Tm"},
+    {"material": "Ge", "hkl": [3, 2, 1], "color": "r", "inventory": {"johann_1000": 0, "johann_500": 0, "von_hamos_500": 0}, "notes": ""},
+    {"material": "Ge", "hkl": [3, 3, 1], "color": "r", "inventory": {"johann_1000": 0, "johann_500": 0, "von_hamos_500": 0}, "notes": "was marked 'at ISS' in the old code but is not on the wiki inventory - verify"},
+    {"material": "Ge", "hkl": [3, 1, 1], "color": "r", "inventory": {"johann_1000": 0, "johann_500": 0, "von_hamos_500": 0}, "notes": ""}
+  ]
+}
